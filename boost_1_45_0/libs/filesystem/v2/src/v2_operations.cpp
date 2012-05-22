@@ -58,14 +58,16 @@ using boost::system::system_category;
 
 # else // BOOST_POSIX_API
 #   include <sys/types.h>
-#   if !defined(__APPLE__) && !defined(__OpenBSD__)
+#   if !defined(__APPLE__) && !defined(__OpenBSD__) && !defined(__ANDROID__)
 #     include <sys/statvfs.h>
 #     define BOOST_STATVFS statvfs
 #     define BOOST_STATVFS_F_FRSIZE vfs.f_frsize
 #   else
 #ifdef __OpenBSD__
 #     include <sys/param.h>
-#endif
+#elif defined(__ANDROID__) 
+#     include <sys/vfs.h> 
+#endif 
 #     include <sys/mount.h>
 #     define BOOST_STATVFS statfs
 #     define BOOST_STATVFS_F_FRSIZE static_cast<boost::uintmax_t>( vfs.f_bsize )
@@ -1262,7 +1264,11 @@ namespace boost
         if ( max == 0 )
         {
           errno = 0;
-          long tmp = ::pathconf( "/", _PC_NAME_MAX );
+#ifdef ANDROID
+          long tmp = 0; // is it?
+#else
+           long tmp = ::pathconf( "/", _PC_NAME_MAX );
+#endif
           if ( tmp < 0 )
           {
             if ( errno == 0 ) // indeterminate
