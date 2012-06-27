@@ -45,8 +45,9 @@
 // See: http://article.gmane.org/gmane.comp.lib.boost.devel/103843
 // See: http://lists.gnu.org/archive/html/bug-guile/2004-01/msg00013.html
 #if defined(__APPLE__) && defined(__DYNAMIC__)
-#include <crt_externs.h>
-#define environ (*_NSGetEnviron()) 
+//#include <crt_externs.h>
+//#define environ (*_NSGetEnviron()) 
+extern char** environ;
 #else
 #if defined(__MWERKS__)
 #include <crtl.h>
